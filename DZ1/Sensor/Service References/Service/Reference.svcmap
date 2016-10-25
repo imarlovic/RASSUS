@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="9dea90a5-3304-44e0-9cd4-698a05d9cdba" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:1027/WebService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="WebService.xsd" MetadataType="Schema" ID="ea17b18a-351c-4a29-b286-1fefe24ac7e5" SourceId="1" SourceUrl="http://localhost:1027/WebService.svc?xsd=xsd1" />
+    <MetadataFile FileName="WebService.disco" MetadataType="Disco" ID="f766a748-97f8-4077-9fd1-d230e4c75a8d" SourceId="1" SourceUrl="http://localhost:1027/WebService.svc?disco" />
+    <MetadataFile FileName="WebService1.xsd" MetadataType="Schema" ID="d9c53a63-ebfb-4f67-a0e7-69e6774b7c62" SourceId="1" SourceUrl="http://localhost:1027/WebService.svc?xsd=xsd0" />
+    <MetadataFile FileName="WebService2.xsd" MetadataType="Schema" ID="bff91a03-4d52-413a-ba8a-7ecbc5dd06a4" SourceId="1" SourceUrl="http://localhost:1027/WebService.svc?xsd=xsd2" />
+    <MetadataFile FileName="Service.wsdl" MetadataType="Wsdl" ID="64785402-9945-4e08-a91b-1fbd2bd0807f" SourceId="1" SourceUrl="http://localhost:1027/WebService.svc?wsdl" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>
