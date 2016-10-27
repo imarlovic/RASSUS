@@ -10,18 +10,21 @@ namespace Sensor
 {
     public class CSVDataProvider : IDataProvider
     {
+        private ILineNumberGenerator LineNumberGenerator;
         private StreamReader csv;
         private List<List<double>> RawDataList;
         private List<SensorData> SensorDataList;
 
-        public CSVDataProvider(string path)
+        public CSVDataProvider(string path, ILineNumberGenerator lineNumberGenerator)
         {
+            LineNumberGenerator = lineNumberGenerator;
+
             csv = new StreamReader(path);
 
             string csvdata = csv.ReadToEnd();
 
             var lines = csvdata.Split(new char[]{ '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                                .Skip(1) //Header -> Temperature,Pressure,Humidity,CO,NO2,SO2
+                                .Skip(1) //Skip Header -> Temperature,Pressure,Humidity,CO,NO2,SO2
                                 .Select(x => x.Split(new char[] { ',' }))
                                 .ToList();
 

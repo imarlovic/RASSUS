@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Sensor
 {
-    public interface IDataProvider
+    public interface ILineNumberGenerator
     {
-        SensorData GetDataAtIndex(int index);
+        int GetRandomNumber();
     }
 }

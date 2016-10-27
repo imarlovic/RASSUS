@@ -20,7 +20,8 @@ namespace Sensor
 
         private bool _IsRegistered = false;
 
-        private WebServiceClient _WebServiceClient;
+        private IWebService _WebService;
+        private IDataProvider _DataProvider;
 
         public bool IsRegistered
         {
@@ -101,9 +102,10 @@ namespace Sensor
 
         
 
-        public SensorClient(string username, string ipaddress, int port)
+        public SensorClient(string username, string ipaddress, int port, IDataProvider dataProvider, IWebService webService)
         {
-            _WebServiceClient = new WebServiceClient();
+            _WebService = webService;
+            _DataProvider = dataProvider;
 
             Username = username;
             IPaddress = ipaddress;
@@ -116,7 +118,7 @@ namespace Sensor
 
         public bool Register()
         {
-            IsRegistered = _WebServiceClient.register(Username, Latitude, Longitude, IPaddress, Port);
+            IsRegistered = _WebService.register(Username, Latitude, Longitude, IPaddress, Port);
 
             if (IsRegistered)
             {
@@ -142,7 +144,7 @@ namespace Sensor
 
         public void FindNeighbor()
         {
-            UserAddress neighborSensor = _WebServiceClient.searchNeighbour(Username);
+            UserAddress neighborSensor = _WebService.searchNeighbour(Username);
 
             if (neighborSensor.UserExists)
             {

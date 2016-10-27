@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sensor.Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,13 +10,16 @@ namespace Sensor
 {
     public class Program
     {
+        private const string PathToCSV = "C:\\Users\\imarl\\OneDrive\\FER\\Raspodijeljeni sustavi\\Domaće zadaće\\DZ1\\Data\\mjerenja.csv";
+
         public static void Main(string[] args)
         {
+            IWebService webService = new WebServiceClient();
+            ILineNumberGenerator lineNumberGenerator = new RandomLineGenerator();
+            IDataProvider dataProvider = new CSVDataProvider(PathToCSV, lineNumberGenerator);
 
-            IDataProvider data = new CSVDataProvider("C:\\Users\\imarl\\OneDrive\\FER\\Raspodijeljeni sustavi\\Domaće zadaće\\DZ1\\Data\\mjerenja.csv");
-
-            SensorClient sensor1 = new SensorClient("sensor1", "localhost", 55501);
-            SensorClient sensor2 = new SensorClient("sensor2", "localhost", 55502);
+            SensorClient sensor1 = new SensorClient("sensor1", "localhost", 55501, dataProvider, webService);
+            SensorClient sensor2 = new SensorClient("sensor2", "localhost", 55502, dataProvider, webService);
 
             Thread.Sleep(1000);
 
