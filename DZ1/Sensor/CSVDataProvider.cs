@@ -10,15 +10,12 @@ namespace Sensor
 {
     public class CSVDataProvider : IDataProvider
     {
-        private ILineNumberGenerator LineNumberGenerator;
         private StreamReader csv;
         private List<List<double>> RawDataList;
         private List<SensorData> SensorDataList;
 
-        public CSVDataProvider(string path, ILineNumberGenerator lineNumberGenerator)
+        public CSVDataProvider(string path)
         {
-            LineNumberGenerator = lineNumberGenerator;
-
             csv = new StreamReader(path);
 
             string csvdata = csv.ReadToEnd();
@@ -48,7 +45,7 @@ namespace Sensor
 
         private SensorData ConvertRawDataToSensorData(List<double> RawData)
         {
-            return new SensorData() { Temperature = RawData[0], Pressure = RawData[1], Humidity = RawData[2], CO = RawData[3], NO2 = RawData[4], CO2 = RawData[5] };
+            return new SensorData() { Temperature = RawData[0], Pressure = RawData[1], Humidity = RawData[2], CO = RawData[3], NO2 = RawData[4], SO2 = RawData[5] };
         }
     }
 }

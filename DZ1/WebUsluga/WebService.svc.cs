@@ -1,29 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.IO;
 using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
 
 namespace WebService
 {
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class Service : IWebService
     {
+        private string PathToLogFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\SensorWebServiceLog\\";
+        private string LogFileName = "Log.txt";
 
         private static List<SensorInfo> RegisteredSensors = new List<SensorInfo>();
+        private static List<Measurement> StoredMeasurements = new List<Measurement>();
+
+        public Service()
+        {
+            if (!Directory.Exists(PathToLogFolder))
+            {
+                Directory.CreateDirectory(PathToLogFolder);
+            }
+        }
 
         public bool register(string username, double latitude, double longitude, string IPaddress, int port)
         {
-            if(RegisteredSensors.Exists(s => s.Username == username || ( s.IPaddress == IPaddress  && s.Port == port) || (s.Latitude == latitude && s.Longitude == longitude)))
+            try
+            {
+                SensorInfo existingSensor = RegisteredSensors.Find(s => s.Username == username || (s.IPaddress == IPaddress && s.Port == port) || (s.Latitude == latitude && s.Longitude == longitude));
+
+                if (existingSensor != null)
+                {
+                    SensorInfo newSensor = new SensorInfo() { Username = username, Latitude = latitude, Longitude = longitude, IPaddress = IPaddress, Port = port };
+                    RegisteredSensors.Remove(existingSensor);
+                    RegisteredSensors.Add(newSensor);
+                    return true;
+                }
+                else
+                {
+                    SensorInfo newSensor = new SensorInfo() { Username = username, Latitude = latitude, Longitude = longitude, IPaddress = IPaddress, Port = port };
+                    RegisteredSensors.Add(newSensor);
+                    return true;
+                }
+            }
+            catch (Exception)
             {
                 return false;
-            }
-            else
-            {
-                SensorInfo newSensor = new SensorInfo() { Username = username, Latitude = latitude, Longitude = longitude, IPaddress = IPaddress, Port = port };
-                RegisteredSensors.Add(newSensor);
-                return true;
             }
         }
 
@@ -33,32 +55,61 @@ namespace WebService
 
             SensorInfo NeighbourSensor = RegisteredSensors.Where(x => x.Username != username).FirstOrDefault();
 
-            if (NeighbourSensor == null)
+            UserAddress neighbourAddress;
+            double MinDistance = double.MaxValue;
+
+            if (NeighbourSensor == null || ClientSensor == null)
             {
-                return new UserAddress() { UserExists = false };
+                neighbourAddress = new UserAddress() { UserExists = false };
             }
-
-            double MinDistance = CalculateDistance(ClientSensor, NeighbourSensor);
-
-            foreach (var Sensor in RegisteredSensors)
+            else
             {
-                double distance = CalculateDistance(ClientSensor, Sensor);
-                if (distance < MinDistance)
+                MinDistance = CalculateDistance(ClientSensor, NeighbourSensor);
+
+                foreach (var Sensor in RegisteredSensors)
                 {
-                    NeighbourSensor = Sensor;
-                    MinDistance = distance;
+                    double distance = CalculateDistance(ClientSensor, Sensor);
+                    if (distance < MinDistance && distance != 0.0)
+                    {
+                        NeighbourSensor = Sensor;
+                        MinDistance = distance;
+                    }
                 }
+
+                neighbourAddress = new UserAddress() { UserExists = true, IPaddress = NeighbourSensor.IPaddress, Port = NeighbourSensor.Port, Name = NeighbourSensor.Username };
             }
 
-            return new UserAddress() { UserExists = true, IPaddress = NeighbourSensor.IPaddress, Port = NeighbourSensor.Port };
+            if (neighbourAddress.UserExists)
+            {
+                Log($"SEARCH: Client: {username.PadRight(20)} Neighbour: {NeighbourSensor.Username.PadRight(20)} Distance: {MinDistance:.1} | {DateTime.Now.ToString()}");
+            }
+            else
+            {
+                Log($"SEARCH: Client: {username.PadRight(20)} Neighbour: Not found | {DateTime.Now.ToString()}");
 
+            }
+
+            return neighbourAddress;
         }
 
         public bool storeMeasurement(string username, string parameter, float averageValue)
         {
-            throw new NotImplementedException();
+            try
+            {
+                StoredMeasurements.Add(new Measurement(username, parameter, averageValue));
+                Log($"MEASUREMENT: User: {username.PadRight(20)} Param: {parameter.PadRight(15)} Value: {averageValue.ToString().PadRight(5)} | {DateTime.Now.ToString()}");
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
+        public void sensorOffline(string IPaddress, int port)
+        {
+            RegisteredSensors.Remove(RegisteredSensors.Find(x => x.IPaddress == IPaddress &&  x.Port == port));
+        }
 
         private double CalculateDistance(SensorInfo Sensor1, SensorInfo Sensor2)
         {
@@ -71,6 +122,17 @@ namespace WebService
             c = 2.0 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1.0 - a));
             d = R * c;
             return d;
+        }
+
+        private void Log(string text)
+        {
+            using (FileStream LogFile = File.Open(PathToLogFolder + LogFileName, FileMode.Append, FileAccess.Write))
+            {
+                using (StreamWriter LogWriter = new StreamWriter(LogFile))
+                {
+                    LogWriter.WriteLine(text);
+                }
+            }
         }
     }
 

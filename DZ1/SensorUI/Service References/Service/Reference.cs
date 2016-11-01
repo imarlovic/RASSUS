@@ -8,103 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sensor.Service {
-    using System.Runtime.Serialization;
-    using System;
+namespace SensorUI.Service {
     
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="UserAddress", Namespace="http://schemas.datacontract.org/2004/07/WebService")]
-    [System.SerializableAttribute()]
-    public partial class UserAddress : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string IPaddressField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int PortField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool UserExistsField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string IPaddress {
-            get {
-                return this.IPaddressField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.IPaddressField, value) != true)) {
-                    this.IPaddressField = value;
-                    this.RaisePropertyChanged("IPaddress");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Name {
-            get {
-                return this.NameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Port {
-            get {
-                return this.PortField;
-            }
-            set {
-                if ((this.PortField.Equals(value) != true)) {
-                    this.PortField = value;
-                    this.RaisePropertyChanged("Port");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool UserExists {
-            get {
-                return this.UserExistsField;
-            }
-            set {
-                if ((this.UserExistsField.Equals(value) != true)) {
-                    this.UserExistsField = value;
-                    this.RaisePropertyChanged("UserExists");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="Service.IWebService")]
@@ -136,12 +41,12 @@ namespace Sensor.Service {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IWebServiceChannel : Sensor.Service.IWebService, System.ServiceModel.IClientChannel {
+    public interface IWebServiceChannel : SensorUI.Service.IWebService, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class WebServiceClient : System.ServiceModel.ClientBase<Sensor.Service.IWebService>, Sensor.Service.IWebService {
+    public partial class WebServiceClient : System.ServiceModel.ClientBase<SensorUI.Service.IWebService>, SensorUI.Service.IWebService {
         
         public WebServiceClient() {
         }

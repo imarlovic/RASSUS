@@ -13,7 +13,7 @@ namespace Sensor
         private double humidity;
         private double co;
         private double no2;
-        private double co2;
+        private double so2;
 
         public double Temperature
         {
@@ -80,17 +80,45 @@ namespace Sensor
             }
         }
 
-        public double CO2
+        public double SO2
         {
             get
             {
-                return co2;
+                return so2;
             }
 
             set
             {
-                co2 = value;
+                so2 = value;
             }
+        }
+
+        public byte[] Serialize()
+        {
+            double[] values = new double[] { Temperature, Pressure, Humidity, CO, NO2, SO2 };
+
+            byte[] data = values.SelectMany(value => BitConverter.GetBytes(value)).ToArray();
+
+            return data;
+        }
+
+        public static SensorData Deserialize(byte[] data)
+        {
+            SensorData newSensorData = new SensorData();
+
+            newSensorData.Temperature = BitConverter.ToDouble(data, sizeof(double) * 0);
+            newSensorData.Pressure =    BitConverter.ToDouble(data, sizeof(double) * 1);
+            newSensorData.Humidity =    BitConverter.ToDouble(data, sizeof(double) * 2);
+            newSensorData.CO =          BitConverter.ToDouble(data, sizeof(double) * 3);
+            newSensorData.NO2 =         BitConverter.ToDouble(data, sizeof(double) * 4);
+            newSensorData.SO2 =         BitConverter.ToDouble(data, sizeof(double) * 5);
+
+            return newSensorData;
+        }
+
+        public override string ToString()
+        {
+            return $"Temp: {Temperature} Press: {Pressure} Hum: {Humidity} CO: {CO} NO2: {NO2} SO2: {SO2}";
         }
     }
 }
