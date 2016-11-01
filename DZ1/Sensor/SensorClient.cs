@@ -21,6 +21,7 @@ namespace Sensor
         private DateTime _startTime;
         private int lastLineNumber;
 
+        private bool sensorWorking = false;
         private bool isRegistered = false;
         private bool measuringState = false;
         private bool sendZeroes = true;
@@ -30,6 +31,7 @@ namespace Sensor
         private ILogger _Logger;
 
         private TcpListener _server;
+        private List<TcpClient> clientSensors = new List<TcpClient>();
         private TcpClient NeighbourClient;
 
         private UserAddress neighborSensor;
@@ -166,6 +168,19 @@ namespace Sensor
             set
             {
                 sendZeroes = value;
+            }
+        }
+
+        public bool SensorWorking
+        {
+            get
+            {
+                return sensorWorking;
+            }
+
+            set
+            {
+                sensorWorking = value;
             }
         }
 
@@ -361,19 +376,46 @@ namespace Sensor
             {
                 _server.Start();
 
-                while (true)
+                SensorWorking = true;
+
+                while (SensorWorking)
                 {
                     TcpClient newClient = await _server.AcceptTcpClientAsync();
+
+                    clientSensors.Add(newClient);
+
                     ReceiveRequest(newClient);                    
                 }
             }
+            catch(Exception ex)
+            {
+                Shutdown();
+                throw ex;
+            }
             finally
             {
-                _server.Stop();
+                Shutdown();
             }
            
         }
 
+        public void Shutdown()
+        {
+            SensorWorking = false;
+
+            _server.Stop();
+
+            _WebService.sensorOffline(IPaddress, Port);
+
+            foreach (var client in clientSensors)
+            {
+                client.Close();
+            }
+
+            StopMeasuring();
+
+            NeighbourClient?.Close();
+        }
         private async Task ConnectToNeighbour()
         {
 

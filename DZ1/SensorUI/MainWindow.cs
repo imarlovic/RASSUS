@@ -18,13 +18,11 @@ namespace SensorUI
         private string ipaddress { get; set; }
         private int port { get; set; }
 
+        private List<Form> spawnedDashoards = new List<Form>();
+
         private Sensor.Service.IWebService webService { get; set; }
         private IDataProvider dataProvider { get; set; }
         private ILogger sensorUILogger { get; set; }
-
-        private SensorClient sensor { get; set; }
-
-
 
         public MainWindow()
         {
@@ -35,85 +33,23 @@ namespace SensorUI
         {
             webService = new Sensor.Service.WebServiceClient();
             dataProvider = new CSVDataProvider(PathToCSV);
-            sensorUILogger = new SensorUILogger(MainLog, RequestLog);
         }
-
-        private async void MeasureButton_Click(object sender, EventArgs e)
-        {
-            await sensor.StartMeasuring();
-        }
-
         private void CreateSensor_Click(object sender, EventArgs e)
         {
-            sensor = new SensorClient(SensorNameTextbox.Text, "127.0.0.1", (int)PortInput.Value, dataProvider, webService, sensorUILogger);
+            var newSensorDashboard = new Dashboard(SensorNameTextbox.Text, "127.0.0.1", (int)PortInput.Value, dataProvider, webService);
 
-            SensorNameTextbox.Enabled = false;
-            PortInput.Enabled = false;
+            newSensorDashboard.Show();
+            newSensorDashboard.Activate();
 
-            Text = $"SensorUI - {sensor.Username} - {sensor.IPaddress}:{sensor.Port}";
-
-            userAddressBindingSource.DataSource = sensor.NeighborSensor;
-            
-
-            MeasureButton.Enabled = true;
-            StopButton.Enabled = true;
-
+            spawnedDashoards.Add(newSensorDashboard);
         }
 
-        private void StopButton_Click(object sender, EventArgs e)
+        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-
-            sensor.StopMeasuring();
-
-            //sensor = null;
-            //SensorNameTextbox.ResetText();
-            //PortInput.ResetText();
-            //SensorNameTextbox.Enabled = true;
-            //PortInput.Enabled = true;
-            //InfoLabel.ResetText();
-
-        }
-    }
-
-    public class SensorUILogger : ILogger
-    {
-        private Label MainLogElement { get; set; }
-        private Label RequestLogElement { get; set; }
-
-        private List<LogEventType> LoggedEventTypes = new List<LogEventType>() {
-            LogEventType.Error,
-            LogEventType.Registration,
-            LogEventType.MeasuredData,
-            LogEventType.Neighbour,
-            LogEventType.RequestReceived,
-            LogEventType.RequestSent
-        }; 
-
-        public SensorUILogger(Label mainLogElement, Label requestLogElement)
-        {
-            MainLogElement = mainLogElement;
-            RequestLogElement = requestLogElement;
-        }
-        public void Log(string text)
-        {
-            MainLogElement.Text = text;
-        }
-
-        public void LogEvent(LogEventType eventType, string text)
-        {
-            if (LoggedEventTypes.Contains(eventType))
+            foreach(var dasboard in spawnedDashoards)
             {
-                switch (eventType)
-                {
-                    case LogEventType.RequestReceived:
-                        RequestLogElement.Text = text;
-                        break;
-                    default:
-                        Log(text);
-                        break;
-                }
+                dasboard.Dispose();
             }
         }
     }
-
 }
