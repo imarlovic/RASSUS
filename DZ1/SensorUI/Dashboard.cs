@@ -41,36 +41,36 @@ namespace SensorUI
             {
                 sensor = new SensorClient(Username, IPaddress, Port, DataProvider, WebService, sensorUILogger);
 
-                if( sensor.SensorWorking == false)
+                if( sensor == null || sensor.SensorWorking == false)
                 {
-                    MessageBox.Show("Unable to create sensor with given data.");
-                    sensor.Shutdown();
+                    MessageBox.Show("Unable to create/start sensor with given data.");
                     Dispose();
+                }
+                else
+                {
+                    userAddressBindingSource.DataSource = sensor.NeighborSensor;
+
+                    SensorName.Text = sensor.Username;
+                    IP.Text = $"{sensor.IPaddress}:{sensor.Port}";
+
+                    Text = $"Sensor Dashboard - {sensor.Username} - {sensor.IPaddress}:{sensor.Port}";
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to create sensor with given data.");
-                sensor.Shutdown();
+                MessageBox.Show("Unable to create/start sensor with given data." + Environment.NewLine + $"Exception: {ex.Message}");
                 Dispose();
             }
-
-            userAddressBindingSource.DataSource = sensor.NeighborSensor;
-
-            SensorName.Text = sensor.Username;
-            IP.Text = $"{sensor.IPaddress}:{sensor.Port}";
-
-            Text = $"Sensor Dashboard - {sensor.Username} - {sensor.IPaddress}:{sensor.Port}";
         }
 
         private async void MeasureButton_Click(object sender, EventArgs e)
         {
-            await sensor.StartMeasuring();
+            await sensor?.StartMeasuring();
         }
 
         private void StopButton_Click(object sender, EventArgs e)
         {
-            sensor.StopMeasuring();
+            sensor?.StopMeasuring();
         }
 
         private void Dashboard_FormClosing(object sender, FormClosingEventArgs e)
